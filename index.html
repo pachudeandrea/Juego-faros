@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#002C22">
+<title>Faros: ¿Sube o baja?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;700;800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: el tono de Faros: claro, confiado, cercano; un juego de fiesta con cara de producto.
+IDEA: la app de Faros filtrando noticias: cada titular es una tarjeta que hay que leer.
+PICTURE: el isotipo de Faros (haz de luz) grande sobre el verde profundo de la marca.
+COLOUR and TYPE: verde profundo #002C22, verde Faros #00D492, menta #D8FAE9; Hanken Grotesk (cercana a Basis Grotesque).
+LAYOUT: una columna de celular; burbujas con una esquina recta como en la marca, iconos circulares.
+*/
+:root{color-scheme:dark;--deep:#002C22;--deeper:#01110D;--card:#073A2E;--line:#14503F;
+--green:#00D492;--glow:#4BE8B6;--mint:#D8FAE9;--white:#FBFBFB;--grey:#A3A3A3;--red:#BB1C1E;--redsoft:#FADCDF}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--deep);color:var(--white);font:17px/1.5 "Hanken Grotesk",system-ui,sans-serif;overflow-x:clip;min-height:100vh;
+background-image:radial-gradient(120% 70% at 0% 100%,rgba(75,232,182,.22),transparent 60%),radial-gradient(90% 60% at 100% 0%,rgba(1,17,26,.9),transparent 70%);background-attachment:fixed}
+h1,h2{font-weight:800;line-height:1.05;text-wrap:balance;margin:0;letter-spacing:-.01em}
+.wrap{max-width:560px;margin:0 auto;padding:18px 18px 44px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px}
+.brand svg{width:26px;height:26px}
+.hero{text-align:center;padding:28px 0 8px}
+.hero .mark{width:min(46vw,190px);height:auto;display:block;margin:0 auto 14px;filter:drop-shadow(0 0 30px rgba(75,232,182,.35))}
+.hero h1{font-size:clamp(34px,9vw,48px)}
+.hero h1 span{color:var(--green)}
+.hero p{margin:10px auto 0;color:var(--mint);font-weight:300;font-size:18px;max-width:22em}
+.box{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;margin-top:16px}
+label{font-weight:700;font-size:15px;color:var(--mint)}
+input{width:100%;font:17px "Hanken Grotesk",sans-serif;padding:13px 15px;border-radius:14px;border:1px solid var(--line);background:var(--deeper);color:var(--white);margin-top:6px}
+input::placeholder{color:#6f8a82}
+button{font:800 17px "Hanken Grotesk",sans-serif;min-height:54px;border-radius:999px;border:0;cursor:pointer;width:100%;padding:12px 18px;color:var(--deep);background:var(--green)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+button:disabled{cursor:default}
+.rules{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.rules li{display:flex;gap:10px;align-items:center;color:var(--mint);font-size:16px}
+.ic{flex:none;width:30px;height:30px;border-radius:50%;background:var(--deeper);display:grid;place-items:center}
+.ic svg{width:16px;height:16px}
+.small{font-size:14px;color:var(--grey);margin:14px 0 0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:15px;color:var(--mint)}
+.pts{font-weight:800;font-size:22px;color:var(--green)}
+.bar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin:12px 0 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--glow));transition:width .1s linear}
+.round{font-size:14px;font-weight:700;color:var(--green)}
+.asset{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:15px;background:var(--mint);color:var(--deep);padding:6px 14px;border-radius:999px;margin-top:10px}
+.q{font-size:clamp(24px,6.4vw,31px);margin:14px 0 6px}
+.ask{color:var(--grey);margin:0}
+.opts{display:grid;gap:10px;margin-top:18px}
+.opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:112px;border-radius:22px;background:var(--deeper);color:var(--white);border:2px solid var(--line);font-size:15px;line-height:1.15;padding:10px 6px}
+.opt .ic{width:46px;height:46px;background:var(--deep)}
+.opt .ic svg{width:24px;height:24px}
+.opt.dim{opacity:.3}
+.opt.ok{border-color:var(--green);background:#0b4a39}
+.opt.no{border-color:var(--red)}
+.fb{display:none;margin-top:16px;border:1.5px solid var(--mint);border-radius:34px 34px 34px 0;padding:20px 22px;background:linear-gradient(135deg,rgba(0,212,146,.18),rgba(1,17,13,.4))}
+.fb.show{display:block}
+.verdict{font-weight:800;font-size:22px;margin:0}
+.verdict.good{color:var(--green)}.verdict.bad{color:#ff8a8c}
+.why{margin:8px 0 16px;font-weight:300;color:var(--mint)}
+.why strong{font-weight:700;color:var(--white)}
+.end{text-align:center}
+.score{font-weight:800;font-size:clamp(64px,20vw,96px);line-height:1;margin:6px 0;background:linear-gradient(180deg,var(--glow),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+.title{font-weight:800;font-size:24px;margin:0}
+.code{display:inline-block;margin-top:12px;font-weight:800;font-size:22px;letter-spacing:.12em;background:var(--deeper);border:1px dashed var(--green);border-radius:12px;padding:8px 16px;color:var(--mint)}
+.send{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:800;min-height:56px;border-radius:999px;background:var(--green);color:var(--deep);margin-top:16px;font-size:18px}
+.slogan{border:1.5px solid var(--mint);border-radius:0 40px 40px 40px;padding:22px;margin-top:16px;background:linear-gradient(135deg,var(--deeper),#0b4a39)}
+.slogan p{margin:0}
+.slogan .big{font-weight:800;font-size:clamp(24px,6vw,30px);line-height:1.1}
+.slogan .big span{color:var(--green)}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.ghost{background:transparent;color:var(--white);border:1.5px solid var(--line)}
+.hide{display:none!important}
+.val .res{margin:12px 0 0;font-weight:700}
+.foot{text-align:center;margin-top:28px}
+.foot a{color:var(--grey);font-size:14px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gl" x1="1" y1="0" x2="0" y2="0"><stop offset=".35" stop-color="#4BE8B6"/><stop offset="1" stop-color="#4BE8B6" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#4BE8B6"/><stop offset="1" stop-color="#4BE8B6" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset=".35" stop-color="#4BE8B6"/><stop offset="1" stop-color="#4BE8B6" stop-opacity="0"/></linearGradient>
+    <symbol id="mark" viewBox="0 0 100 100">
+      <path d="M47.5 1.5c.9-.8 2-.2 2 1V22c0 9-17 17-47.5 23V25.5C21 21 34 13 47.5 1.5Z" fill="url(#gl)"/>
+      <path d="M52.5 1.5c-.9-.8-2-.2-2 1V22c0 9 17 17 47.5 23V25.5C79 21 66 13 52.5 1.5Z" fill="url(#gr)"/>
+      <path d="M47 35h6.5c.7 0 1.2.4 1.3 1L63 98H37l8.7-62c.1-.6.6-1 1.3-1Z" fill="url(#gs)"/>
+    </symbol>
+    <symbol id="up" viewBox="0 0 24 24"><path d="M6 18 18 6M9 6h9v9" stroke="#00D492" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="down" viewBox="0 0 24 24"><path d="M6 6l12 12M18 9v9H9" stroke="#ff8a8c" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="flat" viewBox="0 0 24 24"><path d="M5 12h14" stroke="#A3A3A3" stroke-width="3.2" stroke-linecap="round"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#00D492" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="#ff8a8c" stroke-width="3.2" stroke-linecap="round"/></symbol>
+    <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2" fill="#00D492"/><path d="M12 11v8" stroke="#00D492" stroke-width="3.2" stroke-linecap="round"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#00D492" stroke-width="3.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<main class="wrap">
+<div class="brand"><svg><use href="#mark"/></svg>Faros</div>
+
+<section id="start">
+  <div class="hero">
+    <svg class="mark" viewBox="0 0 100 100" role="img" aria-label="Isotipo de Faros"><use href="#mark"/></svg>
+    <h1>¿Sube, baja o <span>no le afecta?</span></h1>
+    <p>Leé la noticia como lo haría Faros y adiviná qué le pasa a la inversión.</p>
+  </div>
+  <div class="box">
+    <label for="name">Tu nombre y apellido</label>
+    <input id="name" maxlength="30" placeholder="Ej: Marta Gómez" autocomplete="off">
+    <ul class="rules">
+      <li><span class="ic"><svg><use href="#info"/></svg></span>15 preguntas en dos rondas</li>
+      <li><span class="ic"><svg><use href="#plus"/></svg></span>15 segundos por pregunta: si acertás rápido, sumás más puntos</li>
+      <li><span class="ic"><svg><use href="#check"/></svg></span>Al final nos avisás tu resultado y competís por los premios</li>
+    </ul>
+    <p class="small">Para el ranking cuenta solo tu primer intento. Las respuestas siguen la reacción más habitual del mercado; en la vida real también influye lo que el mercado ya esperaba.</p>
+    <div style="margin-top:16px"><button id="go">Jugar</button></div>
+  </div>
+</section>
+
+<section id="game" class="hide">
+  <div class="top"><span id="prog">1 / 15</span><span>Puntos <span class="pts" id="pts">0</span></span></div>
+  <div class="bar"><i id="timer" style="width:100%"></i></div>
+  <div class="box">
+    <span class="round" id="round"></span><br>
+    <span class="asset" id="asset"></span>
+    <h2 class="q" id="q"></h2>
+    <p class="ask" id="ask"></p>
+    <div class="opts" id="opts"></div>
+  </div>
+  <div class="fb" id="fb">
+    <p class="verdict" id="verdict"></p>
+    <p class="why" id="why"></p>
+    <button id="next">Siguiente</button>
+  </div>
+</section>
+
+<section id="end" class="hide">
+  <div class="box end">
+    <p class="small" style="margin:0;color:var(--mint)" id="who"></p>
+    <div class="score" id="final">0</div>
+    <p class="title" id="rank"></p>
+    <p id="hits" style="color:var(--grey);margin:6px 0 0"></p>
+    <div class="code" id="code"></div>
+    <p class="small" style="margin-top:8px" id="codeNote">Tu código de verificación</p>
+  </div>
+  <div class="fb show" style="text-align:center">
+    <p class="verdict good">¡Avisanos tu resultado!</p>
+    <p class="why" style="margin-bottom:0">Sacale una captura a esta pantalla y mandásela al equipo Faros, o mostrásela. Así entrás al ranking y competís por los premios.</p>
+  </div>
+  <div class="slogan">
+    <p class="big">No inviertas a ciegas, <span>invertí con Faros.</span></p>
+    <p style="margin-top:8px;color:var(--mint);font-weight:300">Faros lee las noticias por vos y te muestra solo las que afectan a tu cartera.</p>
+  </div>
+  <div class="row">
+    <button id="copy">Copiar resultado</button>
+    <button id="again" class="ghost">Jugar de nuevo</button>
+  </div>
+</section>
+
+<section id="validar" class="hide">
+  <div class="box val">
+    <h2 style="font-size:28px">Validar un puntaje</h2>
+    <p class="small" style="margin-top:6px">Para el equipo Faros: chequeá que el puntaje del ranking sea real antes de dar un premio.</p>
+    <div style="display:grid;gap:12px;margin-top:14px">
+      <div><label for="vn">Nombre (tal cual lo escribió)</label><input id="vn"></div>
+      <div><label for="vs">Puntaje</label><input id="vs" inputmode="numeric"></div>
+      <div><label for="vi">Intento</label><input id="vi" inputmode="numeric" value="1"></div>
+      <div><label for="vc">Código</label><input id="vc" autocapitalize="characters"></div>
+      <button id="vbtn">Validar</button>
+    </div>
+    <p class="res" id="vres"></p>
+  </div>
+</section>
+
+<div class="foot"><a href="#validar" id="valLink">Validar puntajes (equipo)</a></div>
+</main>
+
+<script>
+{
+const R1 = 'Ronda 1 · ¿Sube, baja o no le afecta?', R2 = 'Ronda 2 · ¿Verdadero o falso?';
+const Q = [
+ {r:R1,a:'YPF',q:'El precio internacional del petróleo sube 15% en una semana.',c:'sube',w:'Una petrolera cobra más por cada barril que vende, así que el mercado espera mayores ganancias.'},
+ {r:R1,a:'Banco Galicia',q:'Sube el precio internacional del café.',c:'nada',w:'No tiene relación con el negocio del banco. La mayoría de las noticias no tocan tu cartera, y Faros las filtra por vos.'},
+ {r:R1,a:'Mercado Libre',q:'Presenta ventas trimestrales muy por encima de lo que esperaba el mercado.',c:'sube',w:'Superar las expectativas suele empujar la acción hacia arriba.'},
+ {r:R1,a:'Empresa agroexportadora',q:'Sequía histórica en la zona núcleo: se recorta fuerte la cosecha de soja.',c:'baja',w:'Menos cosecha significa menos para vender y exportar.'},
+ {r:R1,a:'Bonos argentinos',q:'El riesgo país baja 300 puntos.',c:'sube',w:'Si el país parece menos riesgoso, los inversores pagan más por sus bonos: el precio sube.'},
+ {r:R1,a:'Aluar',q:'El precio mundial del aluminio toca su máximo del año.',c:'sube',w:'Aluar produce aluminio: si el metal vale más, gana más.'},
+ {r:R1,a:'Pampa Energía',q:'Sale a la venta un nuevo modelo de celular.',c:'nada',w:'Una noticia que está en todos lados, pero que no tiene nada que ver con una empresa de energía.'},
+ {r:R1,a:'CEDEARs de tecnológicas de EE.UU.',q:'La Reserva Federal sube la tasa de interés por sorpresa.',c:'baja',w:'Con tasas más altas, el dinero se va a inversiones más seguras y las tecnológicas suelen caer.'},
+ {r:R1,a:'Una empresa de tu cartera',q:'Se descubre un fraude en sus balances contables.',c:'baja',w:'Se pierde la confianza en los números de la empresa y los inversores venden.'},
+ {r:R2,a:'Sobre Faros',q:'El 80% de los inversores activos se perdió alguna vez una noticia que afectó sus inversiones.',c:'v',w:'Verdadero. Por eso nace Faros: no es falta de ganas, es falta de herramientas.'},
+ {r:R2,a:'Sobre Faros',q:'Faros Market cuesta $50.000 por mes.',c:'f',w:'Falso. Faros Market cuesta unos <strong>$12.500</strong> por mes. Los $50.000 son de Faros Partner, para brokers y asesores.'},
+ {r:R2,a:'Finanzas',q:'Si suben las tasas de interés, el precio de los bonos que ya existen sube.',c:'f',w:'Falso. Cuando suben las tasas, los bonos viejos rinden menos que los nuevos, así que su precio baja.'},
+ {r:R2,a:'Sobre Faros',q:'Cerca de 1 millón de argentinos opera en el mercado todos los meses.',c:'v',w:'Verdadero. Y su cuello de botella no es operar, sino informarse rápido.'},
+ {r:R2,a:'Finanzas',q:'Diversificar tu cartera elimina por completo el riesgo.',c:'f',w:'Falso. Diversificar reduce el riesgo, pero no lo elimina.'},
+ {r:R2,a:'Sobre Faros',q:'Podés probar Faros gratis durante un mes.',c:'v',w:'Verdadero. Un mes de prueba gratuita y después elegís tu plan.'}
+];
+const OPT3 = [['sube','up','Sube'],['baja','down','Baja'],['nada','flat','No le afecta']];
+const OPT2 = [['v','check','Verdadero'],['f','cross','Falso']];
+const LIMIT = 15000, SALT = 'faros-dnn-2026';
+const $ = id => document.getElementById(id);
+let i = 0, pts = 0, hits = 0, t0 = 0, tick = null, done = false, player = '', attempt = 1, code = '';
+
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+function hash(s){let h = 2166136261; for (const ch of s){h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0;} return h;}
+function makeCode(name, score, att){
+  const n = hash(SALT + '|' + name.trim().toLowerCase() + '|' + score + '|' + att);
+  const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let out = '', x = n;
+  for (let k = 0; k < 6; k++){ out += abc[x % abc.length]; x = (Math.floor(x / abc.length) ^ (n >>> (k * 3))) >>> 0; }
+  return out;
+}
+
+function show(id){
+  for (const s of ['start','game','end','validar']) $(s).classList.toggle('hide', s !== id);
+  $('valLink').parentElement.classList.toggle('hide', id === 'game');
+  window.scrollTo(0,0);
+}
+
+function ask(){
+  const it = Q[i]; done = false;
+  $('prog').textContent = (i+1) + ' / ' + Q.length;
+  $('round').textContent = it.r;
+  $('asset').textContent = it.a;
+  $('q').textContent = it.q;
+  const tf = it.r === R2;
+  $('ask').textContent = tf ? '¿Es verdadero o falso?' : '¿Qué le pasa al precio?';
+  $('opts').className = 'opts ' + (tf ? 'two' : 'three');
+  $('opts').innerHTML = (tf ? OPT2 : OPT3).map(o => '<button class="opt" data-k="'+o[0]+'"><span class="ic"><svg><use href="#'+o[1]+'"/></svg></span>'+o[2]+'</button>').join('');
+  $('fb').classList.remove('show');
+  t0 = Date.now(); clearInterval(tick);
+  tick = setInterval(() => {
+    const left = Math.max(0, LIMIT - (Date.now() - t0));
+    $('timer').style.width = (left / LIMIT * 100) + '%';
+    if (!left) answer(null);
+  }, 100);
+}
+
+function answer(k){
+  if (done) return; done = true; clearInterval(tick);
+  const it = Q[i], ok = k === it.c;
+  if (ok){ const left = Math.max(0, LIMIT - (Date.now() - t0)); pts += 500 + Math.round(500 * left / LIMIT); hits++; }
+  $('pts').textContent = pts;
+  for (const b of $('opts').children){
+    b.disabled = true;
+    if (b.dataset.k === it.c) b.classList.add('ok');
+    else b.classList.add(b.dataset.k === k ? 'no' : 'dim');
+  }
+  const v = $('verdict');
+  v.className = 'verdict ' + (ok ? 'good' : 'bad');
+  v.textContent = ok ? '¡Bien leído!' : (k === null ? 'Se acabó el tiempo' : 'Esta vez no');
+  $('why').innerHTML = '<strong>Resumen Faros:</strong> ' + it.w;
+  $('next').textContent = i === Q.length - 1 ? 'Ver mi resultado' : 'Siguiente';
+  $('fb').classList.add('show');
+  $('fb').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function rank(){
+  const p = hits / Q.length;
+  if (p >= .9) return 'Guardián del faro';
+  if (p >= .7) return 'Inversor bien informado';
+  if (p >= .4) return 'Navegando con niebla';
+  return 'Inversor a ciegas (¡necesitás Faros!)';
+}
+
+function finish(){
+  show('end');
+  code = makeCode(player, pts, attempt);
+  $('who').textContent = (player || 'Tu') + (player ? ', tu puntaje' : ' puntaje') + (attempt > 1 ? ' · intento ' + attempt : '');
+  $('final').textContent = pts;
+  $('rank').textContent = rank();
+  $('hits').textContent = hits + ' de ' + Q.length + ' respuestas correctas';
+  $('code').textContent = code;
+  if (attempt > 1) $('codeNote').textContent = 'Este es un intento extra: para los premios cuenta tu primer intento.';
+}
+
+$('go').addEventListener('click', () => {
+  player = $('name').value.trim();
+  if (!player){ $('name').focus(); $('name').placeholder = 'Escribí tu nombre para jugar'; return; }
+  attempt = (parseInt(store.get('faros-intentos') || '0', 10) || 0) + 1;
+  store.set('faros-intentos', String(attempt));
+  store.set('faros-nombre', player);
+  i = 0; pts = 0; hits = 0; $('pts').textContent = 0; show('game'); ask();
+});
+$('opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (b) answer(b.dataset.k); });
+$('next').addEventListener('click', () => { i++; i < Q.length ? (ask(), window.scrollTo(0,0)) : finish(); });
+$('again').addEventListener('click', () => show('start'));
+$('copy').addEventListener('click', async () => {
+  const txt = player + ' hizo ' + pts + ' puntos (' + hits + '/' + Q.length + ') en el juego de Faros. Código: ' + code + '. No inviertas a ciegas, invertí con Faros.';
+  try { await navigator.clipboard.writeText(txt); $('copy').textContent = '¡Copiado!'; }
+  catch(e){ $('copy').textContent = 'No se pudo copiar'; }
+  setTimeout(() => $('copy').textContent = 'Copiar resultado', 1800);
+});
+$('vbtn').addEventListener('click', () => {
+  const ok = makeCode($('vn').value, parseInt($('vs').value, 10), parseInt($('vi').value, 10) || 1) === $('vc').value.trim().toUpperCase();
+  const r = $('vres'); r.textContent = ok ? '✓ Puntaje válido' : '✕ No coincide: revisá nombre, puntaje e intento';
+  r.style.color = ok ? 'var(--green)' : '#ff8a8c';
+});
+
+const saved = store.get('faros-nombre'); if (saved) $('name').value = saved;
+function route(){ show(location.hash === '#validar' ? 'validar' : 'start'); }
+window.addEventListener('hashchange', route); route();
+}
+</script>
+</body>
+</html>
